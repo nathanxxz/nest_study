@@ -4,7 +4,7 @@ import { IsEmpty, IsNotEmpty, IsString  } from "class-validator";
 export class criarTaskDto{
 
   @IsString({message: "O nome tem que ser do tipo string"})
-  @IsEmpty()
+
   readonly  nome: string;
 
   @IsString()

@@ -1,13 +1,15 @@
 import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
-import { Task } from './entity/tasks.entity';
+import { Task } from './entities/tasks.entity';
 import { NotFoundError } from 'rxjs';
 import { criarTaskDto } from './dto/criar-tasks.dto';
 import { atualizarTaskDto } from './dto/atualizar-tasks.dto';
+import { PrismaService } from 'src/database/prisma.service';
 
 
 
 @Injectable()
 export class TasksService {
+    constructor(private prisma: PrismaService){}
 
     private tasks: Task[] = [
         {
@@ -19,7 +21,7 @@ export class TasksService {
     ]
 
     listarTasks(){
-        return this.tasks;
+        return this.prisma.task.findMany();
     }
      buscarUnico(id:number){
        const task = this.tasks.find(task=> task.id===Number(id));

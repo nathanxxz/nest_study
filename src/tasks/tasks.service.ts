@@ -1,15 +1,19 @@
 import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
-import { Task } from './entities/tasks.entity';
 import { criarTaskDto } from './dto/criar-tasks.dto';
 import { atualizarTaskDto } from './dto/atualizar-tasks.dto';
 import { PrismaService } from 'src/database/prisma.service';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
 
 @Injectable()
 export class TasksService {
     constructor(private prisma: PrismaService) { }
 
-    async listarTasks() {
-        const lista = await this.prisma.task.findMany();
+    async listarTasks(pagination?: PaginationDto) {
+        const {limite = 10, compensacao = 0} = pagination ?? {};
+        const lista = await this.prisma.task.findMany({
+            take:limite,
+            skip:compensacao
+        });
         return lista;
     }
     async buscarUnico(id: number) {

@@ -1,15 +1,18 @@
-import { Controller, Get, Param, Query, Body, Post, Patch, Delete, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Param, Query, Body, Post, Patch, Delete, ParseIntPipe, UseInterceptors } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { criarTaskDto } from './dto/criar-tasks.dto';
 import { atualizarTaskDto } from './dto/atualizar-tasks.dto';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { LoggingInterceptor } from 'src/interceptors/logging.interceptor';
 
 @Controller('tasks')
+@UseInterceptors(LoggingInterceptor)
 export class TasksController {
     constructor(private readonly taskService: TasksService) { }
 
     @Get("/listar")
-    getListar() {
-        return this.taskService.listarTasks()
+    getListar(@Query() pagination: PaginationDto) {
+        return this.taskService.listarTasks(pagination)
     }
 
     @Get(":id")

@@ -21,4 +21,19 @@ model Task{
   descricao String
   completo Boolean
   atualizadoEm DateTime? @default(now())
+  userId Int?
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
+
+model User{
+  id Int @id @default(autoincrement())
+  nome String
+  email String @unique
+  senha String
+  atualizadoEm DateTime? @default(now())
+
+  Task Task[]
+}
+
+//npx prisma migrate dev, para criar uma nova migracao
+//npx prisma generate

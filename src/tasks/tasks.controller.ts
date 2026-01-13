@@ -1,16 +1,19 @@
-import { Controller, Get, Param, Query, Body, Post, Patch, Delete, ParseIntPipe, UseInterceptors } from '@nestjs/common';
+import { Controller, Get, Param, Query, Body, Post, Patch, Delete, ParseIntPipe, UseInterceptors, UseGuards } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { criarTaskDto } from './dto/criar-tasks.dto';
 import { atualizarTaskDto } from './dto/atualizar-tasks.dto';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { LoggingInterceptor } from 'src/common/interceptors/logging.interceptor';
+import { AuthAdminGuard } from 'src/common/guards/admin-guard';
 
 @Controller('tasks')
 @UseInterceptors(LoggingInterceptor)
 export class TasksController {
     constructor(private readonly taskService: TasksService) { }
 
+   
     @Get("/listar")
+    @UseGuards(AuthAdminGuard) // guard apenas aqui, mas posso por no controller inteiro se quiser
     getListar(@Query() pagination: PaginationDto) {
         return this.taskService.listarTasks(pagination)
     }

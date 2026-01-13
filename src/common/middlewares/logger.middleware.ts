@@ -9,7 +9,11 @@ export class LoggerMiddleware implements NestMiddleware {
   const authorization = req.headers.authorization
 
   if(authorization){
-    console.log("Token", authorization); //aqui é utilizado para validar token de usuario
+ //   console.log("Token", authorization); //aqui é utilizado para validar token de usuario
+    req['user'] = {
+        token: authorization,
+        role: 'admin'
+    }
   }
     next();
   }

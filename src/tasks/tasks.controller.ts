@@ -3,7 +3,7 @@ import { TasksService } from './tasks.service';
 import { criarTaskDto } from './dto/criar-tasks.dto';
 import { atualizarTaskDto } from './dto/atualizar-tasks.dto';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
-import { LoggingInterceptor } from 'src/interceptors/logging.interceptor';
+import { LoggingInterceptor } from 'src/common/interceptors/logging.interceptor';
 
 @Controller('tasks')
 @UseInterceptors(LoggingInterceptor)

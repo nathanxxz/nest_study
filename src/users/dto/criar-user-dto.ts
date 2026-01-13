@@ -14,4 +14,6 @@ export class criarUserDto {
     @MaxLength(12)
     senha: string;
 
+    
+
 }

@@ -2,11 +2,14 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/database/prisma.service';
 import { criarUserDto } from './dto/criar-user-dto';
 import { atualizarUserDto } from './dto/atualizar-user-dto';
+import { HashingServiceProtocol } from 'src/auth/hash/hashing.service';
 
 @Injectable()
 export class UsersService {
 
-    constructor(private readonly prisma: PrismaService){}
+    constructor(private readonly prisma: PrismaService,
+        private readonly hashService: HashingServiceProtocol
+    ){}
 
     async buscar(id:number){
        const user= await this.prisma.user.findFirst({
@@ -28,11 +31,12 @@ export class UsersService {
     }
 
     async criarUsuario(criarUserDto: criarUserDto){
+        const senhaHash = await this.hashService.hash(criarUserDto.senha)
         const user= await this.prisma.user.create({
             data:{
                 nome: criarUserDto.nome,
                 email: criarUserDto.email,
-                senha: criarUserDto.senha
+                senha: senhaHash
             },
             select:{ //so devolve os parametros que eu deixar ai dentro
                 id: true,

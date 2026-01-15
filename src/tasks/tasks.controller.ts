@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query, Body, Post, Patch, Delete, ParseIntPipe, UseInterceptors, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Query, Body, Post, Patch, Delete, ParseIntPipe, UseInterceptors, UseGuards, Injectable, Inject } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { criarTaskDto } from './dto/criar-tasks.dto';
 import { atualizarTaskDto } from './dto/atualizar-tasks.dto';
@@ -9,13 +9,20 @@ import { AuthAdminGuard } from 'src/common/guards/admin-guard';
 @Controller('tasks')
 @UseInterceptors(LoggingInterceptor)
 export class TasksController {
-    constructor(private readonly taskService: TasksService) { }
+    constructor(private readonly taskService: TasksService,
 
+     //   @Inject("KEY_TOKEN") //usado para injetar e usar o valor de algo
+   //     private readonly keyToken: string
+    ) { }
+
+    
    
     @Get("/listar")
     @UseGuards(AuthAdminGuard) // guard apenas aqui, mas posso por no controller inteiro se quiser
     getListar(@Query() pagination: PaginationDto) {
+     //   console.log(this.keyToken)
         return this.taskService.listarTasks(pagination)
+       
     }
 
     @Get(":id")

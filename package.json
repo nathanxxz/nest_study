@@ -28,6 +28,7 @@
     "@prisma/adapter-better-sqlite3": "^7.2.0",
     "@prisma/adapter-pg": "^7.2.0",
     "@prisma/client": "^7.2.0",
+    "bcryptjs": "^3.0.3",
     "better-sqlite3": "^12.6.0",
     "class-transform": "^0.7.1",
     "class-transformer": "^0.5.1",

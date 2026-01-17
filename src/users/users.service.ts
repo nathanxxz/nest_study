@@ -76,14 +76,22 @@ export class UsersService {
             throw new HttpException("Esse usuario nao existe", HttpStatus.NOT_FOUND)
         }
 
+        const data: {nome?: string, senha?: string} = {
+            nome: atualizarUserDto.nome ? atualizarUserDto.nome : atu.nome,
+        }
+
+        if(atualizarUserDto?.senha){
+            const senhaHash = await this.hashService.hash(atualizarUserDto?.senha)
+            data['senha'] = senhaHash
+        }
+
         const atua = await this.prisma.user.update({
             where: {
                 id: id
             },
             data:{
-                nome: atualizarUserDto.nome? atualizarUserDto.nome : atu.nome,
-                email: atualizarUserDto.email? atualizarUserDto.email: atu.email,
-                senha: atualizarUserDto.senha? atualizarUserDto.senha: atu.senha
+                nome: data.nome,
+                senha: data?.senha ? data?.senha : atu.senha
             },
             select:{
                 id: true,

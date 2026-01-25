@@ -6,10 +6,13 @@ import { AuthController } from './auth.controller';
 import { PrismaService } from 'src/database/prisma.service';
 import { ConfigModule } from '@nestjs/config';
 import jwtConfig from './config/jwt.config';
+import { JwtModule } from '@nestjs/jwt';
 
 @Global() // pode ser usada na aplicacao inteira, nao precisa importar em outros lugares, apenas no app module
 @Module({
-    imports:[ConfigModule.forFeature(jwtConfig)],
+    imports:[ConfigModule.forFeature(jwtConfig),
+        JwtModule.registerAsync(jwtConfig.asProvider())
+    ],
     providers:[ PrismaService,
         {
             provide: HashingServiceProtocol,
@@ -18,7 +21,7 @@ import jwtConfig from './config/jwt.config';
         AuthService
     ],
     exports:[
-        HashingServiceProtocol
+        HashingServiceProtocol, JwtModule, ConfigModule
     ],
     controllers: [AuthController]
 })

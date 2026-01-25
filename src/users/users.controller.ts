@@ -1,9 +1,11 @@
-import { Body, Controller, Delete, Param, ParseIntPipe, Patch, Post, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Param, ParseIntPipe, Patch, Post, Req, UseGuards, UseInterceptors } from '@nestjs/common';
 import { Get } from '@nestjs/common';
 import { LoggingInterceptor } from 'src/common/interceptors/logging.interceptor';
 import { UsersService } from './users.service';
 import { criarUserDto } from './dto/criar-user-dto';
 import { atualizarUserDto } from './dto/atualizar-user-dto';
+import { AuthTokenGuard } from 'src/auth/guard/auth-token.guard';
+import { REQUEST_TOKEN_PAYLOAD } from 'src/auth/common/auth.constants';
 
 @Controller('users')
 @UseInterceptors(LoggingInterceptor)
@@ -27,8 +29,10 @@ export class UsersController {
         return this.userService.excluir(id);
     }
 
+    @UseGuards(AuthTokenGuard)
     @Patch(":id")
-    atualizarUsuario(@Param("id", ParseIntPipe)id:number, @Body() atualizarUserDto: atualizarUserDto){
+    atualizarUsuario(@Param("id", ParseIntPipe)id:number, @Body() atualizarUserDto: atualizarUserDto, @Req() req: Request){
+        console.log(req[REQUEST_TOKEN_PAYLOAD]?.sub)
         return this.userService.atualizar(id,atualizarUserDto);
     }
 }

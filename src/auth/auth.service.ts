@@ -4,6 +4,7 @@ import { PrismaService } from 'src/database/prisma.service';
 import { HashingServiceProtocol } from './hash/hashing.service';
 import jwtConfig from './config/jwt.config';
 import { ConfigType } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 
 
 @Injectable()
@@ -12,7 +13,8 @@ export class AuthService {
     constructor(private prisma: PrismaService, private readonly hashService: HashingServiceProtocol,
 
       @Inject(jwtConfig.KEY)
-      private readonly jwtConfiguration: ConfigType<typeof jwtConfig>
+      private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
+      private readonly jwtService: JwtService
     ){
       console.log(jwtConfiguration)
     }
@@ -34,10 +36,25 @@ export class AuthService {
           throw new HttpException("Falha ao fazer login", HttpStatus.UNAUTHORIZED)
       }
 
+      const token = await this.jwtService.signAsync(
+        {
+          sub: user.id,
+          email: user.email,
+
+        },
+        {
+          secret: this.jwtConfiguration.secret,
+          expiresIn: this.jwtConfiguration.jwtTtl,
+          audience: this.jwtConfiguration.audience,
+          issuer: this.jwtConfiguration.issuer
+        }
+      )
+
       return{
         id:user.id,
         nome:user.nome,
         email:user.email,
+        token:token
       }
     }
 }

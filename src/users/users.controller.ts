@@ -32,7 +32,7 @@ export class UsersController {
     @UseGuards(AuthTokenGuard)
     @Patch(":id")
     atualizarUsuario(@Param("id", ParseIntPipe)id:number, @Body() atualizarUserDto: atualizarUserDto, @Req() req: Request){
-        console.log(req[REQUEST_TOKEN_PAYLOAD]?.sub)
-        return this.userService.atualizar(id,atualizarUserDto);
+        
+        return this.userService.atualizar(id,atualizarUserDto, REQUEST_TOKEN_PAYLOAD);
     }
 }

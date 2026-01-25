@@ -5,7 +5,8 @@ import { UsersService } from './users.service';
 import { criarUserDto } from './dto/criar-user-dto';
 import { atualizarUserDto } from './dto/atualizar-user-dto';
 import { AuthTokenGuard } from 'src/auth/guard/auth-token.guard';
-import { REQUEST_TOKEN_PAYLOAD } from 'src/auth/common/auth.constants';
+import { TokenPayLoadParam } from 'src/auth/param/token-payload.param';
+import { PayLoadTokenDto } from 'src/auth/dto/payload.dto';
 
 @Controller('users')
 @UseInterceptors(LoggingInterceptor)
@@ -25,14 +26,15 @@ export class UsersController {
     }
 
     @Delete(":id")
-    excluirUsuario(@Param("id", ParseIntPipe) id:number){
-        return this.userService.excluir(id);
+    excluirUsuario(@Param("id", ParseIntPipe) id:number, @TokenPayLoadParam() tokenPay: PayLoadTokenDto){
+        return this.userService.excluir(id, tokenPay);
     }
 
     @UseGuards(AuthTokenGuard)
     @Patch(":id")
-    atualizarUsuario(@Param("id", ParseIntPipe)id:number, @Body() atualizarUserDto: atualizarUserDto, @Req() req: Request){
+    atualizarUsuario(@Param("id", ParseIntPipe)id:number, @Body() atualizarUserDto: atualizarUserDto, @TokenPayLoadParam() tokenPay : PayLoadTokenDto){
         
-        return this.userService.atualizar(id,atualizarUserDto, REQUEST_TOKEN_PAYLOAD);
+      
+        return this.userService.atualizar(id,atualizarUserDto,tokenPay);
     }
 }

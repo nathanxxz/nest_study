@@ -3,18 +3,19 @@ import { criarTaskDto } from './dto/criar-tasks.dto';
 import { atualizarTaskDto } from './dto/atualizar-tasks.dto';
 import { PrismaService } from 'src/database/prisma.service';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { PayLoadTokenDto } from 'src/auth/dto/payload.dto';
 
 
 @Injectable()
 export class TasksService {
     constructor(private prisma: PrismaService) { }
 
-    
+
     async listarTasks(pagination?: PaginationDto) {
-        const {limite = 10, compensacao = 0} = pagination ?? {};
+        const { limite = 10, compensacao = 0 } = pagination ?? {};
         const lista = await this.prisma.task.findMany({
-            take:limite,
-            skip:compensacao
+            take: limite,
+            skip: compensacao
         });
         return lista;
     }
@@ -32,13 +33,13 @@ export class TasksService {
         //throw new NotFoundException("Nao existe essa tarefa")
     }
 
-    async criarTask(criarTaskDto: criarTaskDto) {
+    async criarTask(criarTaskDto: criarTaskDto, token: PayLoadTokenDto) {
         const novaTask = await this.prisma.task.create({
             data: {
                 nome: criarTaskDto.nome,
                 descricao: criarTaskDto.descricao,
                 completo: false,
-                userId: criarTaskDto.userId
+                userId: token.sub
 
             }
         })
@@ -46,7 +47,7 @@ export class TasksService {
         return novaTask;
     }
 
-    async atualizarTasks(id: number, atualizarTaskDto: atualizarTaskDto) {
+    async atualizarTasks(id: number, atualizarTaskDto: atualizarTaskDto, token: PayLoadTokenDto) {
 
         const index = await this.prisma.task.findFirst({
             where: {
@@ -55,6 +56,10 @@ export class TasksService {
         })
 
         if (!index) {
+            throw new HttpException("Essa tarefa nao existe", HttpStatus.NOT_FOUND)
+        }
+
+        if (index.id !== token.sub) {
             throw new HttpException("Essa tarefa nao existe", HttpStatus.NOT_FOUND)
         }
 
@@ -67,7 +72,7 @@ export class TasksService {
         return atu;
     }
 
-    async exluir(id: number) {
+    async exluir(id: number, token : PayLoadTokenDto) {
         try {
             const index = await this.prisma.task.findFirst({
                 where: {
@@ -84,6 +89,10 @@ export class TasksService {
 
             else {
                 throw new HttpException("Essa tarefa nao existe", HttpStatus.NOT_FOUND);
+            }
+
+            if(index.id !== token.sub){
+                  throw new HttpException("Erro ao deletar", HttpStatus.BAD_REQUEST);
             }
 
             return {

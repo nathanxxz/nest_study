@@ -31,7 +31,7 @@ model User{
   email String @unique
   senha String
   atualizadoEm DateTime? @default(now())
-
+  status Boolean @default(true)
   Task Task[]
 }
 

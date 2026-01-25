@@ -12,8 +12,6 @@ export class criarTaskDto{
   readonly  descricao: string;
 
 
-  @IsNotEmpty()
-  @IsNumber()
-  readonly userId: number
+ 
   
 }
